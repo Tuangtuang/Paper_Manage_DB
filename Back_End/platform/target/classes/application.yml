@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: jgx13245
+    url: jdbc:mysql://139.199.57.40/platform_2?characterEncoding=utf-8&useSSL=false
+
+
+server:
+  servlet:
+    context-path: /api
+  port: 8081
+
+mybatis:
+  mapper-locations: classpath:mapping/*.xml
+  type-aliases-package: com.example.demo.model.entity
+
+#pagehelper分页插件
+#pagehelper:
+#  helperDialect: mysql
+#  reasonable: true
+#  supportMethodsArguments: true
+#  params: count=countSql
