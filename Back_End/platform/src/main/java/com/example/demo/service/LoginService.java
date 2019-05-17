@@ -18,8 +18,5 @@ public interface LoginService {
     //    用户登陆接口1
     Result UserLogin(UserLogin userLogin);
 
-    //    邮件验证接口53
-    Result sendMail(String mail, String identity) throws UnsupportedEncodingException, NoSuchAlgorithmException;
-
 
 }
