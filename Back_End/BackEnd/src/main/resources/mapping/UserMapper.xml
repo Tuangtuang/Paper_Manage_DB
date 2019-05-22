@@ -100,7 +100,8 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.example.demo.model.entity.User" >
+  <insert id="insert" parameterType="com.example.demo.model.entity.User"
+  useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     insert into user (id, phone, password, 
       identity, others)
     values (#{id,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 

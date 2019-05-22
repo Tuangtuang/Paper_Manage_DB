@@ -99,7 +99,8 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.example.demo.model.entity.School" >
+  <insert id="insert" parameterType="com.example.demo.model.entity.School"
+  keyColumn="id" keyProperty="id" useGeneratedKeys="true">
     insert into school (id, name, degree, 
       others)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{degree,jdbcType=INTEGER}, 
