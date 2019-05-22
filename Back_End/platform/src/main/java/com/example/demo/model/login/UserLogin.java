@@ -11,10 +11,9 @@ import lombok.Data;
  **/
 @Data
 public class UserLogin {
-    @JsonProperty("userId")
+    @JsonProperty("user_id")
     String userId;
-    @JsonProperty("userPassword")
+    @JsonProperty("password")
     String userPassword;
-    @JsonProperty("userIdentity")
-    String userIdentity;
+
 }
