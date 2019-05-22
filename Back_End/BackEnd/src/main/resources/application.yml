@@ -1,0 +1,34 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: jgx13245
+    url: jdbc:mysql://139.199.57.40/Paper_Manage?characterEncoding=utf-8&useSSL=false
+
+
+server:
+  servlet:
+    context-path: /api
+  port: 8081
+
+mybatis:
+  mapper-locations: classpath:mapping/*.xml
+  type-aliases-package: com.example.demo.model.entity
+
+#mail:
+#  smtp:
+#    port: 465
+#    auth: true
+#    timeout: 5000
+#  auth:
+#    password: 16122253TYQ
+#    name: tyqbest@163.com
+#  host: smtp.163.com
+#  is:
+#    ssl: true
+#  transport:
+#    protocol: smtp
+#  send:
+#    charset: UTF-8
+
+
