@@ -1,16 +1,14 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.overview.Result;
+import com.example.demo.model.superManager.DeleteUser;
 import com.example.demo.model.superManager.SchoolInfo;
 import com.example.demo.model.superManager.UserInfo;
 import com.example.demo.service.SuperManageService;
 import com.example.demo.tool.JwtUtil;
 import com.example.demo.tool.ResultTool;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -60,4 +58,33 @@ public class SuperManageController {
         return superManageService.addSchool(schoolInfo);
     }
 
+    @PostMapping("/userManage/deleteUser")
+    public Result deleteUser(@RequestBody DeleteUser deleteUser,HttpServletRequest httpServletRequest){
+        String token=httpServletRequest.getHeader("Authorization");
+        String id;
+        try {
+            id= JwtUtil.parseJwt(token);
+        }catch (Exception e){
+            return ResultTool.error("登陆状态无效，无法解析token");
+        }
+        if (!deleteUser.getUserId().equals(id)){
+            return ResultTool.error("登陆状态无效，token和id不一致 ");
+        }
+        return superManageService.deleteUser(deleteUser);
+    }
+
+    @GetMapping("/userManage/getUserList")
+    public Result getAll(@RequestParam("userId")String userId,HttpServletRequest httpServletRequest){
+        String token=httpServletRequest.getHeader("Authorization");
+        String id;
+        try {
+            id= JwtUtil.parseJwt(token);
+        }catch (Exception e){
+            return ResultTool.error("登陆状态无效，无法解析token");
+        }
+        if (!userId.equals(id)){
+            return ResultTool.error("登陆状态无效，token和id不一致 ");
+        }
+        return superManageService.getAllUser(userId);
+    }
 }

@@ -7,15 +7,13 @@ import com.example.demo.model.entity.SchoolExample;
 import com.example.demo.model.entity.User;
 import com.example.demo.model.entity.UserExample;
 import com.example.demo.model.overview.Result;
-import com.example.demo.model.superManager.SchoolId;
-import com.example.demo.model.superManager.SchoolInfo;
-import com.example.demo.model.superManager.UserId;
-import com.example.demo.model.superManager.UserInfo;
+import com.example.demo.model.superManager.*;
 import com.example.demo.tool.ResultTool;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -96,6 +94,71 @@ public class SuperManageService {
         SchoolId schoolId=new SchoolId();
         schoolId.setSchoolId(school.getId().toString());
         return ResultTool.success(schoolId);
+
+    }
+
+
+    /** 
+    * @Description: 根据id删除用户 #22 
+    * @Param: [deleteUser] 
+    * @return: com.example.demo.model.overview.Result 
+    * @Author: tyq 
+    * @Date: 2019-05-29 
+    */ 
+    public Result deleteUser(DeleteUser deleteUser){
+//        检查是否是管理员
+        if(deleteUser.getUserId().equals(deleteUser.getDeleteUserId())){
+            return ResultTool.error("不可以自己删除自己");
+        }
+        UserExample checkManage=new UserExample();
+        checkManage.createCriteria().andIdEqualTo(Integer.parseInt(deleteUser.getUserId())).andIdentityEqualTo(3);
+        List<User> managerList=userMapper.selectByExample(checkManage);
+        if(managerList.isEmpty()==true){
+            return ResultTool.error("管理员不存在");
+        }
+//        检查要删除的用户
+        User user=userMapper.selectByPrimaryKey(Integer.parseInt(deleteUser.getDeleteUserId()));
+        if(user==null){
+            return ResultTool.error("要删除的用户不存在");
+        }
+        userMapper.deleteByPrimaryKey(user.getId());
+        return ResultTool.success();
+    }
+
+
+    /** 
+    * @Description: 获得所有用户 #21
+    * @Param: [] 
+    * @return: com.example.demo.model.overview.Result 
+    * @Author: tyq 
+    * @Date: 2019-05-29 
+    */ 
+    public Result getAllUser(String userId){
+//        检查是否是管理员
+        User manage=userMapper.selectByPrimaryKey(Integer.parseInt(userId));
+        if(manage==null){
+            return ResultTool.error("管理员不存在");
+        }
+        if(manage.getIdentity()!=3){
+            return ResultTool.error("不是管理员没有权限查看");
+        }
+
+        UserExample userExample=new UserExample();
+        userExample.createCriteria().andIdIsNotNull();
+        List<User> userList=userMapper.selectByExample(userExample);
+        if(userList.isEmpty()==true){
+            return ResultTool.error("用户不存在");
+        }
+        List<AllUserInfo> allUserInfoList=new LinkedList<>();
+        for(User item:userList){
+            AllUserInfo allUserInfo=new AllUserInfo();
+            allUserInfo.setId(item.getId().toString());
+            allUserInfo.setIdentity(item.getIdentity().toString());
+            allUserInfo.setPhone(item.getPhone());
+            allUserInfo.setUserName(item.getOthers());
+            allUserInfoList.add(allUserInfo);
+        }
+        return ResultTool.success(allUserInfoList);
 
     }
 }

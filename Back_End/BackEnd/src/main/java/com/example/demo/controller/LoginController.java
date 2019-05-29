@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.aliyuncs.exceptions.ClientException;
 import com.example.demo.model.login.CheckCode;
 import com.example.demo.model.login.CheckCodeBack;
+import com.example.demo.model.login.NewPassword;
 import com.example.demo.model.login.UserLogin;
 import com.example.demo.model.overview.Result;
 import com.example.demo.service.LoginService;
@@ -38,5 +39,10 @@ public class LoginController {
     @PostMapping("/ValidateCheck")
     public Result checkValidateCode(@RequestBody CheckCodeBack checkCodeback)throws com.aliyuncs.exceptions.ClientException, NoSuchAlgorithmException, UnsupportedEncodingException {
         return loginService.validateNum(checkCodeback);
+    }
+
+    @PostMapping("/updatePassword")
+    public Result updateCode(@RequestBody NewPassword newPassword){
+        return loginService.updatePassword(newPassword);
     }
 }

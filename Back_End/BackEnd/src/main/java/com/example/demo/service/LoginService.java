@@ -154,5 +154,31 @@ public class LoginService {
         }
     }
 
+    /** 
+    * @Description: 更新密码 
+    * @Param: [newPassword] 
+    * @return: com.example.demo.model.overview.Result 
+    * @Author: tyq 
+    * @Date: 2019-05-29 
+    */ 
+    public Result updatePassword(NewPassword newPassword){
+//        检查手机号是否存在
+        UserExample userExample=new UserExample();
+        userExample.createCriteria().andPhoneEqualTo(newPassword.getPhone());
+        List<User> userList=userMapper.selectByExample(userExample);
+        if(userList.isEmpty()){
+            return ResultTool.error("手机号不存在");
+        }
+        try {
+            User record=userList.get(0);
+            record.setPassword(newPassword.getNew_password());
+            userMapper.updateByPrimaryKeySelective(record);
+        }catch (Exception e){
+            return ResultTool.error("更新密码失败");
+        }
+
+        return ResultTool.success();
+    }
+
 
 }
