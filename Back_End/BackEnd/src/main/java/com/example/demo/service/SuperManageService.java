@@ -1,11 +1,10 @@
 package com.example.demo.service;
 
+import com.example.demo.dao.FirstKnowledgeMapper;
 import com.example.demo.dao.SchoolMapper;
+import com.example.demo.dao.SubjectMapper;
 import com.example.demo.dao.UserMapper;
-import com.example.demo.model.entity.School;
-import com.example.demo.model.entity.SchoolExample;
-import com.example.demo.model.entity.User;
-import com.example.demo.model.entity.UserExample;
+import com.example.demo.model.entity.*;
 import com.example.demo.model.overview.Result;
 import com.example.demo.model.superManager.*;
 import com.example.demo.tool.ResultTool;
@@ -31,6 +30,11 @@ public class SuperManageService {
     @Resource
     SchoolMapper schoolMapper;
 
+    @Resource
+    SubjectMapper subjectMapper;
+
+    @Resource
+    FirstKnowledgeMapper firstKnowledgeMapper;
 
     /** 
     * @Description: 添加用户 
@@ -161,4 +165,31 @@ public class SuperManageService {
         return ResultTool.success(allUserInfoList);
 
     }
+
+
+    public Result addFirstKnowledg(AddFirstKnowledge addFirstKnowledge){
+//        检查是否是管理
+        User manage=userMapper.selectByPrimaryKey(Integer.parseInt(addFirstKnowledge.getUserId()));
+        if(manage==null){
+            return ResultTool.error("管理员不存在");
+        }
+        if(manage.getIdentity()!=3){
+            return ResultTool.error("不是管理员没有权限添加");
+        }
+//        检查是否存在id对应的科目
+        Subject subject=subjectMapper.selectByPrimaryKey(Integer.parseInt(addFirstKnowledge.getSubjectId()));
+        if(subject==null){
+            return ResultTool.error("该科目不存在");
+        }
+//        添加一级知识点
+        FirstKnowledge firstKnowledge=new FirstKnowledge();
+        firstKnowledge.setOthers(addFirstKnowledge.getSubjectId());
+        firstKnowledge.setContent(addFirstKnowledge.getFirstKnowledge());
+        firstKnowledgeMapper.insert(firstKnowledge);
+        FirstKnowledgeIdResponse firstKnowledgeIdResponse=new FirstKnowledgeIdResponse();
+        firstKnowledgeIdResponse.setFisrtKnowledgeId(firstKnowledge.getId().toString());
+        return ResultTool.success(firstKnowledgeIdResponse);
+
+    }
+
 }

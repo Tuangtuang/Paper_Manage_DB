@@ -98,7 +98,8 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.example.demo.model.entity.FirstKnowledge" >
+  <insert id="insert" parameterType="com.example.demo.model.entity.FirstKnowledge"
+  keyProperty="id" keyColumn="id" useGeneratedKeys="true">
     insert into first_knowledge (id, content, others
       )
     values (#{id,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, #{others,jdbcType=VARCHAR}

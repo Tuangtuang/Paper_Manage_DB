@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.overview.Result;
+import com.example.demo.model.superManager.AddFirstKnowledge;
 import com.example.demo.model.superManager.DeleteUser;
 import com.example.demo.model.superManager.SchoolInfo;
 import com.example.demo.model.superManager.UserInfo;
@@ -86,5 +87,20 @@ public class SuperManageController {
             return ResultTool.error("登陆状态无效，token和id不一致 ");
         }
         return superManageService.getAllUser(userId);
+    }
+
+    @PostMapping("/SuperManager/addFirstKown")
+    public Result addFirst(@RequestBody AddFirstKnowledge addFirstKnowledge,HttpServletRequest httpServletRequest){
+        String token=httpServletRequest.getHeader("Authorization");
+        String id;
+        try {
+            id= JwtUtil.parseJwt(token);
+        }catch (Exception e){
+            return ResultTool.error("登陆状态无效，无法解析token");
+        }
+        if (!addFirstKnowledge.getUserId().equals(id)){
+            return ResultTool.error("登陆状态无效，token和id不一致 ");
+        }
+        return superManageService.addFirstKnowledg(addFirstKnowledge);
     }
 }
