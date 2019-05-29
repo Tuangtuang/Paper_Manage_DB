@@ -66,4 +66,31 @@ public class PaperManageService {
         }
         return subject.getContent();
     }
+    
+    
+
+    /** 
+    * @Description: 根据id删除题目 
+    * @Param: [questionId, userId] 
+    * @return: com.example.demo.model.overview.Result 
+    * @Author: tyq 
+    * @Date: 2019-05-29 
+    */ 
+    public Result deleteQuestion(String questionId,String userId){
+//        检查身份是否合法
+        User user=userMapper.selectByPrimaryKey(Integer.parseInt(userId));
+        if(user==null){
+            return ResultTool.error("该用户不存在");
+        }
+        if(user.getIdentity()==1){
+            return ResultTool.error("操作者不合法");
+        }
+//        检查题目是否存在
+        Question question=questionMapper.selectByPrimaryKey(Integer.parseInt(questionId));
+        if(question==null){
+            return ResultTool.error("要删除的题目不存在");
+        }
+        questionMapper.deleteByPrimaryKey(Integer.parseInt(questionId));
+        return ResultTool.success();
+    }
 }

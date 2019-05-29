@@ -1,13 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.overview.Result;
+import com.example.demo.model.paperManager.QuestionId;
 import com.example.demo.service.PaperManageService;
 import com.example.demo.tool.JwtUtil;
 import com.example.demo.tool.ResultTool;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -39,5 +37,22 @@ public class PaperManageController {
             return ResultTool.error("登陆状态无效，token和id不一致 ");
         }
         return paperManageService.getAllProblems(userId);
+    }
+
+
+    @PostMapping("/userManage/deleteQuestion")
+    public Result deleteQuestionById(@RequestBody QuestionId questionId,HttpServletRequest httpServletRequest){
+        String token=httpServletRequest.getHeader("Authorization");
+        String id;
+        try {
+            id= JwtUtil.parseJwt(token);
+        }catch (Exception e){
+            return ResultTool.error("登陆状态无效，无法解析token");
+        }
+        if (!questionId.getUserId().equals(id)){
+            return ResultTool.error("登陆状态无效，token和id不一致 ");
+        }
+        return paperManageService.deleteQuestion(questionId.getQuestionId(),questionId.getUserId());
+
     }
 }
