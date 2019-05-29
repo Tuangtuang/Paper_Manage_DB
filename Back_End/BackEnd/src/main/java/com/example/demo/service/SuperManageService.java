@@ -167,6 +167,13 @@ public class SuperManageService {
     }
 
 
+    /**
+    * @Description: 添加一级知识点
+    * @Param: [addFirstKnowledge]
+    * @return: com.example.demo.model.overview.Result
+    * @Author: tyq
+    * @Date: 2019-05-29
+    */
     public Result addFirstKnowledg(AddFirstKnowledge addFirstKnowledge){
 //        检查是否是管理
         User manage=userMapper.selectByPrimaryKey(Integer.parseInt(addFirstKnowledge.getUserId()));
@@ -190,6 +197,35 @@ public class SuperManageService {
         firstKnowledgeIdResponse.setFisrtKnowledgeId(firstKnowledge.getId().toString());
         return ResultTool.success(firstKnowledgeIdResponse);
 
+    }
+
+    /**
+    * @Description: 设置为超级管理员
+    * @Param: [setIdentity]
+    * @return: com.example.demo.model.overview.Result
+    * @Author: tyq
+    * @Date: 2019-05-29
+    */
+    public Result setPaperManager(SetIdentity setIdentity){
+        //        检查是否是管理
+        User manage=userMapper.selectByPrimaryKey(Integer.parseInt(setIdentity.getUserId()));
+        if(manage==null){
+            return ResultTool.error("管理员不存在");
+        }
+        if(manage.getIdentity()!=3){
+            return ResultTool.error("不是管理员没有权限添加");
+        }
+//        检查被设置用户是否存在
+        User user = userMapper.selectByPrimaryKey(Integer.parseInt(setIdentity.getSetUserId()));
+        if(user==null){
+            return ResultTool.error("该用户不存在");
+        }
+        if(user.getIdentity()==2){
+            return ResultTool.error("该用户已经是试题管理员");
+        }
+        user.setIdentity(2);
+        userMapper.updateByPrimaryKeySelective(user);
+        return ResultTool.success();
     }
 
 }

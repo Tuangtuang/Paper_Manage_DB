@@ -34,4 +34,6 @@ public interface QuestionMapper {
     int updateByPrimaryKeyWithBLOBs(QuestionWithBLOBs record);
 
     int updateByPrimaryKey(Question record);
+
+
 }
