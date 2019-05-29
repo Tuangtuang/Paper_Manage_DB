@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.overview.Result;
+import com.example.demo.model.paperManager.AutoPaperRequest;
 import com.example.demo.model.paperManager.QuestionId;
 import com.example.demo.service.PaperManageService;
 import com.example.demo.tool.JwtUtil;
@@ -54,5 +55,21 @@ public class PaperManageController {
         }
         return paperManageService.deleteQuestion(questionId.getQuestionId(),questionId.getUserId());
 
+    }
+
+
+    @GetMapping("/generatePaper")
+    public  Result createPaper(@RequestBody AutoPaperRequest autoPaperRequest,HttpServletRequest httpServletRequest){
+        String token=httpServletRequest.getHeader("Authorization");
+        String id;
+        try {
+            id= JwtUtil.parseJwt(token);
+        }catch (Exception e){
+            return ResultTool.error("登陆状态无效，无法解析token");
+        }
+        if (!autoPaperRequest.getUserId().equals(id)){
+            return ResultTool.error("登陆状态无效，token和id不一致 ");
+        }
+        return paperManageService.autoPaper(autoPaperRequest);
     }
 }

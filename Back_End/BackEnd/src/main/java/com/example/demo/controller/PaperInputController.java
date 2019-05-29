@@ -1,15 +1,13 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.overview.Result;
+import com.example.demo.model.paperInput.AnswerInput;
 import com.example.demo.service.PaperInputService;
 import com.example.demo.service.SuperManageService;
 import com.example.demo.tool.JwtUtil;
 import com.example.demo.tool.ResultTool;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -137,6 +135,22 @@ public class PaperInputController {
             return ResultTool.error("登陆状态无效，token和id不一致 ");
         }
         return paperInputService.getSecondByFirst(first_id);
+    }
+
+
+    @PostMapping("/PaperInput/answerInput")
+    public Result inputAnswer(@RequestBody AnswerInput answerInput,HttpServletRequest httpServletRequest){
+        String token=httpServletRequest.getHeader("Authorization");
+        String id;
+        try {
+            id= JwtUtil.parseJwt(token);
+        }catch (Exception e){
+            return ResultTool.error("登陆状态无效，无法解析token");
+        }
+        if (!answerInput.getUserId().equals(id)){
+            return ResultTool.error("登陆状态无效，token和id不一致 ");
+        }
+        return paperInputService.inputAnswer(answerInput.getProblemId(),answerInput.getContent(),answerInput.getHtml_content());
     }
 
 

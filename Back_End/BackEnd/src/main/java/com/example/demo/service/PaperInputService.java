@@ -4,6 +4,7 @@ import com.example.demo.dao.*;
 import com.example.demo.model.entity.*;
 import com.example.demo.model.overview.Result;
 import com.example.demo.tool.ResultTool;
+import org.springframework.beans.factory.parsing.Problem;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -33,6 +34,12 @@ public class PaperInputService {
     
     @Resource
     private SecondKnowledgeMapper secondKnowledgeMapper;
+
+    @Resource
+    private QuestionMapper questionMapper;
+
+    @Resource
+    private  KeyMapper keyMapper;
 
     
     /** 
@@ -137,5 +144,25 @@ public class PaperInputService {
         }
         return ResultTool.success(secondKnowledgeList);
     }
+
+//    public Result inputProblem(String userId,String subjectId,String schoolId,String typeId)
+
+    public Result inputAnswer(String problemId,String content,String html)
+    {
+//        检查是否存在该问题
+        QuestionWithBLOBs problem=questionMapper.selectByPrimaryKey(Integer.parseInt(problemId));
+        if(problem==null){
+            return ResultTool.error("不存在该问题");
+        }
+//        检查该题目是否存在答案
+        KeyWithBLOBs key=new KeyWithBLOBs();
+        key.setQuestionId(Integer.parseInt(problemId));
+        key.setKeyContent(content);
+        key.setPicture(html);
+        keyMapper.insert(key);
+        return ResultTool.success();
+
+    }
+
 
 }
