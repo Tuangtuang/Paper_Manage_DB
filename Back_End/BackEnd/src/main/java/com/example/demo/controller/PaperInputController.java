@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.model.overview.Result;
 import com.example.demo.model.paperInput.AnswerInput;
+import com.example.demo.model.paperManager.ProblemName;
+import com.example.demo.model.paperManager.QuestionId;
 import com.example.demo.service.PaperInputService;
 import com.example.demo.service.SuperManageService;
 import com.example.demo.tool.JwtUtil;
@@ -151,6 +153,22 @@ public class PaperInputController {
             return ResultTool.error("登陆状态无效，token和id不一致 ");
         }
         return paperInputService.inputAnswer(answerInput.getProblemId(),answerInput.getContent(),answerInput.getHtml_content());
+    }
+
+
+    @PostMapping("/PaperInput/contentInput")
+    public Result inputProblem(@RequestBody ProblemName problemName,HttpServletRequest httpServletRequest){
+        String token=httpServletRequest.getHeader("Authorization");
+        String id;
+        try {
+            id= JwtUtil.parseJwt(token);
+        }catch (Exception e){
+            return ResultTool.error("登陆状态无效，无法解析token");
+        }
+        if (!problemName.getUserId().equals(id)){
+            return ResultTool.error("登陆状态无效，token和id不一致 ");
+        }
+        return paperInputService.putProblemContent(problemName);
     }
 
 

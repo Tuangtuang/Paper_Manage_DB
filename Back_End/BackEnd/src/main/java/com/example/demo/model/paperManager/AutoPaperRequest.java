@@ -21,7 +21,7 @@ public class AutoPaperRequest {
     String blank;
     @JsonProperty("numAn")
     String answer;
-    @JsonProperty("difficult")
+    @JsonProperty("1")
     String difficult;
     @JsonProperty("userId")
     String userId;

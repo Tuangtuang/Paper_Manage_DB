@@ -129,7 +129,8 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.example.demo.model.entity.QuestionWithBLOBs" >
+  <insert id="insert" parameterType="com.example.demo.model.entity.QuestionWithBLOBs"
+  keyProperty="id" keyColumn="id" useGeneratedKeys="true">
     insert into question (id, grade, school_id, 
       type_id, subject_id, second_knowledge_id, 
       degree, others, content, 

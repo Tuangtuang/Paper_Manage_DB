@@ -91,6 +91,13 @@
                enableSelectByExample="true"
                selectByExampleQueryId="true"/>
 
+        <table tableName="solution" domainObjectName="Solution"
+               enableCountByExample="true"
+               enableUpdateByExample="true"
+               enableDeleteByExample="true"
+               enableSelectByExample="true"
+               selectByExampleQueryId="true"/>
+
 
     </context>
 </generatorConfiguration>

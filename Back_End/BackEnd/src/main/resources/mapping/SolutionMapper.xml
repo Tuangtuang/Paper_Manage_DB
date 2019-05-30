@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.example.demo.dao.SchoolMapper" >
-  <resultMap id="BaseResultMap" type="com.example.demo.model.entity.School" >
+<mapper namespace="com.example.demo.dao.SolutionMapper" >
+  <resultMap id="BaseResultMap" type="com.example.demo.model.entity.Solution" >
     <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="degree" property="degree" jdbcType="INTEGER" />
-    <result column="others" property="others" jdbcType="VARCHAR" />
+    <result column="problem_id" property="problemId" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.example.demo.model.entity.SolutionWithBLOBs" extends="BaseResultMap" >
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+    <result column="other" property="other" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -66,16 +68,21 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, name, degree, others
+    id, problem_id
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.example.demo.model.entity.SchoolExample" >
+  <sql id="Blob_Column_List" >
+    content, other
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.example.demo.model.entity.SolutionExample" >
     select
     <if test="distinct" >
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from school
+    ,
+    <include refid="Blob_Column_List" />
+    from solution
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -83,116 +90,145 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.example.demo.model.entity.SolutionExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from solution
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    from school
+    ,
+    <include refid="Blob_Column_List" />
+    from solution
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from school
+    delete from solution
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <delete id="deleteByExample" parameterType="com.example.demo.model.entity.SchoolExample" >
-    delete from school
+  <delete id="deleteByExample" parameterType="com.example.demo.model.entity.SolutionExample" >
+    delete from solution
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.example.demo.model.entity.School"
-  useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-    insert into school (id, name, degree, 
-      others)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{degree,jdbcType=INTEGER}, 
-      #{others,jdbcType=VARCHAR})
+  <insert id="insert" parameterType="com.example.demo.model.entity.SolutionWithBLOBs" >
+    insert into solution (id, problem_id, content, 
+      other)
+    values (#{id,jdbcType=INTEGER}, #{problemId,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR}, 
+      #{other,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.example.demo.model.entity.School" >
-    insert into school
+  <insert id="insertSelective" parameterType="com.example.demo.model.entity.SolutionWithBLOBs" >
+    insert into solution
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
       </if>
-      <if test="name != null" >
-        name,
+      <if test="problemId != null" >
+        problem_id,
       </if>
-      <if test="degree != null" >
-        degree,
+      <if test="content != null" >
+        content,
       </if>
-      <if test="others != null" >
-        others,
+      <if test="other != null" >
+        other,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="name != null" >
-        #{name,jdbcType=VARCHAR},
+      <if test="problemId != null" >
+        #{problemId,jdbcType=INTEGER},
       </if>
-      <if test="degree != null" >
-        #{degree,jdbcType=INTEGER},
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
       </if>
-      <if test="others != null" >
-        #{others,jdbcType=VARCHAR},
+      <if test="other != null" >
+        #{other,jdbcType=LONGVARCHAR},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.example.demo.model.entity.SchoolExample" resultType="java.lang.Integer" >
-    select count(*) from school
+  <select id="countByExample" parameterType="com.example.demo.model.entity.SolutionExample" resultType="java.lang.Integer" >
+    select count(*) from solution
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update school
+    update solution
     <set >
       <if test="record.id != null" >
         id = #{record.id,jdbcType=INTEGER},
       </if>
-      <if test="record.name != null" >
-        name = #{record.name,jdbcType=VARCHAR},
+      <if test="record.problemId != null" >
+        problem_id = #{record.problemId,jdbcType=INTEGER},
       </if>
-      <if test="record.degree != null" >
-        degree = #{record.degree,jdbcType=INTEGER},
+      <if test="record.content != null" >
+        content = #{record.content,jdbcType=LONGVARCHAR},
       </if>
-      <if test="record.others != null" >
-        others = #{record.others,jdbcType=VARCHAR},
+      <if test="record.other != null" >
+        other = #{record.other,jdbcType=LONGVARCHAR},
       </if>
     </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update solution
+    set id = #{record.id,jdbcType=INTEGER},
+      problem_id = #{record.problemId,jdbcType=INTEGER},
+      content = #{record.content,jdbcType=LONGVARCHAR},
+      other = #{record.other,jdbcType=LONGVARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
   <update id="updateByExample" parameterType="map" >
-    update school
+    update solution
     set id = #{record.id,jdbcType=INTEGER},
-      name = #{record.name,jdbcType=VARCHAR},
-      degree = #{record.degree,jdbcType=INTEGER},
-      others = #{record.others,jdbcType=VARCHAR}
+      problem_id = #{record.problemId,jdbcType=INTEGER}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.model.entity.School" >
-    update school
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.model.entity.SolutionWithBLOBs" >
+    update solution
     <set >
-      <if test="name != null" >
-        name = #{name,jdbcType=VARCHAR},
+      <if test="problemId != null" >
+        problem_id = #{problemId,jdbcType=INTEGER},
       </if>
-      <if test="degree != null" >
-        degree = #{degree,jdbcType=INTEGER},
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
       </if>
-      <if test="others != null" >
-        others = #{others,jdbcType=VARCHAR},
+      <if test="other != null" >
+        other = #{other,jdbcType=LONGVARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.example.demo.model.entity.School" >
-    update school
-    set name = #{name,jdbcType=VARCHAR},
-      degree = #{degree,jdbcType=INTEGER},
-      others = #{others,jdbcType=VARCHAR}
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.example.demo.model.entity.SolutionWithBLOBs" >
+    update solution
+    set problem_id = #{problemId,jdbcType=INTEGER},
+      content = #{content,jdbcType=LONGVARCHAR},
+      other = #{other,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.demo.model.entity.Solution" >
+    update solution
+    set problem_id = #{problemId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

@@ -3,6 +3,8 @@ package com.example.demo.service;
 import com.example.demo.dao.*;
 import com.example.demo.model.entity.*;
 import com.example.demo.model.overview.Result;
+import com.example.demo.model.paperInput.Solution;
+import com.example.demo.model.paperManager.ProblemName;
 import com.example.demo.tool.ResultTool;
 import org.springframework.beans.factory.parsing.Problem;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,9 @@ public class PaperInputService {
 
     @Resource
     private  KeyMapper keyMapper;
+
+    @Resource
+    private  UserMapper userMapper;
 
     
     /** 
@@ -164,5 +169,75 @@ public class PaperInputService {
 
     }
 
+    public Result putProblemContent(ProblemName problemName){
+//        检查各种id是否存在
+//        检查userId
+        User user = userMapper.selectByPrimaryKey(Integer.parseInt(problemName.getUserId()));
+        if(user==null){
+            return ResultTool.error("用户不存在");
+        }
+//        检查学校是否存在
+        School school = schoolMapper.selectByPrimaryKey(Integer.parseInt(problemName.getSchoolId()));
+        if(school==null){
+            return ResultTool.error("学校不存在");
+        }
+//        检查科目是否存在
+        Subject subject=subjectMapper.selectByPrimaryKey(Integer.parseInt(problemName.getSubjectId()));
+        if(subject==null){
+            return ResultTool.error("学科不存在");
+        }
+//        检查题型是否存存在
+        Type type = typeMapper.selectByPrimaryKey(Integer.parseInt(problemName.getTypeId()));
+        if(type==null){
+            return ResultTool.error("题型不存在");
+        }
+//        检查一级知识点是否存在
+        FirstKnowledge firstKnowledge=firstKnowledgeMapper.selectByPrimaryKey(Integer.parseInt(problemName.getFirstKnowledgeId()));
+        if(firstKnowledge==null){
+            return ResultTool.error("一级知识点不存在");
+        }
+//        检查二级知识点是否存在
+        SecondKnowledge secondKnowledge=secondKnowledgeMapper.selectByPrimaryKey(Integer.parseInt(problemName.getSecondKnowledgeId()));
+        if(secondKnowledge==null){
+            return ResultTool.error("二级知识点不存在");
+        }
+
+//        检查一级知识点和二级知识点是否匹配
+        if(secondKnowledge.getFirstId()!=Integer.parseInt(problemName.getFirstKnowledgeId())){
+            return ResultTool.error("一级和二级知识点不匹配");
+        }
+
+        if(firstKnowledge.getOthers().equals(problemName.getSubjectId())==false){
+            return ResultTool.error("一级知识点和学科不匹配");
+        }
+
+//        创建记录
+        QuestionWithBLOBs question=new QuestionWithBLOBs();
+        question.setDegree(Integer.parseInt(problemName.getHardLevel()));
+        question.setGrade(Integer.parseInt(problemName.getGrade()));
+        question.setSchoolId(Integer.parseInt(problemName.getSchoolId()));
+        question.setTypeId(Integer.parseInt(problemName.getTypeId()));
+        question.setContent(problemName.getMarkdownContent());
+        question.setOthers(problemName.getHtmlContent());
+        question.setSecondKnowledgeId(Integer.parseInt(problemName.getSecondKnowledgeId()));
+        question.setSubjectId(Integer.parseInt(problemName.getSubjectId()));
+        questionMapper.insert(question);
+        return ResultTool.success();
+
+    }
+
+//    public Result putSolution(Solution solution){
+//        int problemId=Integer.parseInt(solution.getProblemId());
+//        Question question=questionMapper.selectByPrimaryKey(problemId);
+//        if(question==null){
+//            return ResultTool.error("不存在该题目");
+//        }
+//        int userId = Integer.parseInt(solution.getUserId());
+//        User user=userMapper.selectByPrimaryKey(userId);
+//        if(user==null){
+//            return ResultTool.error("用户不存在");
+//        }
+//
+//    }
 
 }

@@ -1,14 +1,14 @@
 package com.example.demo.service;
 
-import com.example.demo.dao.QuestionMapper;
-import com.example.demo.dao.SubjectMapper;
-import com.example.demo.dao.UserMapper;
+import com.example.demo.dao.*;
 import com.example.demo.model.entity.*;
 import com.example.demo.model.overview.Result;
 import com.example.demo.model.paperManager.AutoPaperRequest;
 import com.example.demo.model.paperManager.AutoPaperResponse;
+import com.example.demo.model.paperManager.ProblemName;
 import com.example.demo.model.paperManager.Questions;
 import com.example.demo.tool.ResultTool;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -25,6 +25,7 @@ import java.util.List;
  * @create: 2019-05-29 20:23
  **/
 @Service
+@Slf4j
 public class PaperManageService {
     @Resource
     private UserMapper userMapper;
@@ -34,6 +35,20 @@ public class PaperManageService {
 
     @Resource
     private SubjectMapper subjectMapper;
+
+    @Resource
+    private SchoolMapper schoolMapper;
+
+    @Resource
+    private TypeMapper typeMapper;
+
+    @Resource
+    private FirstKnowledgeMapper firstKnowledgeMapper;
+
+
+    @Resource
+    private SecondKnowledgeMapper secondKnowledgeMapper;
+
 
 //    获得所有题目 #24
     public Result getAllProblems(String userId){
@@ -71,16 +86,16 @@ public class PaperManageService {
         }
         return subject.getContent();
     }
-    
-    
 
-    /** 
-    * @Description: 根据id删除题目 
-    * @Param: [questionId, userId] 
-    * @return: com.example.demo.model.overview.Result 
-    * @Author: tyq 
-    * @Date: 2019-05-29 
-    */ 
+
+
+    /**
+    * @Description: 根据id删除题目
+    * @Param: [questionId, userId]
+    * @return: com.example.demo.model.overview.Result
+    * @Author: tyq
+    * @Date: 2019-05-29
+    */
     public Result deleteQuestion(String questionId,String userId){
 //        检查身份是否合法
         User user=userMapper.selectByPrimaryKey(Integer.parseInt(userId));
@@ -113,16 +128,20 @@ public class PaperManageService {
         QuestionExample questionExample1=new QuestionExample();
         questionExample1.createCriteria().andSecondKnowledgeIdIn(knowledge).andTypeIdEqualTo(1);//填空题
         List<QuestionWithBLOBs> questionList1=questionMapper.selectByExampleWithBLOBs(questionExample1);
+        log.info(questionList1.size()+"");
 
         QuestionExample questionExample2=new QuestionExample();
         questionExample2.createCriteria().andSecondKnowledgeIdIn(knowledge).andTypeIdEqualTo(2);//选择题
         List<QuestionWithBLOBs> questionList2=questionMapper.selectByExampleWithBLOBs(questionExample2);
+        log.info(questionList2.size()+"");
 
         QuestionExample questionExample3=new QuestionExample();
         questionExample3.createCriteria().andSecondKnowledgeIdIn(knowledge).andTypeIdEqualTo(3);//简答题
         List<QuestionWithBLOBs> questionList3=questionMapper.selectByExampleWithBLOBs(questionExample3);
+        log.info(questionList3.size()+"");
 
         List<String> choose=randomChoice(questionList1, getMin(Integer.parseInt(autoPaperRequest.getChoose()),questionList1.size()));
+        log.info(choose.size()+"");
         List<String> blank = randomChoice(questionList2, getMin(Integer.parseInt(autoPaperRequest.getBlank()),questionList2.size()));
         List<String> answer=randomChoice(questionList3,getMin(Integer.parseInt(autoPaperRequest.getAnswer()),questionList3.size()));
         AutoPaperResponse autoPaperResponse=new AutoPaperResponse();
@@ -168,8 +187,9 @@ public class PaperManageService {
 
 
     private List<String> randomChoice(List<QuestionWithBLOBs> resource,int n){
+//        log.info(n+""+"n");
         HashSet<Integer> set=new HashSet<>();
-        randomSet(0,resource.size()-1,n,set);
+        randomSet(0,resource.size(),n,set);
         List<String> target=new LinkedList<>();
 //        target.add()
         Iterator<Integer> it = set.iterator();
@@ -179,4 +199,10 @@ public class PaperManageService {
         }
         return target;
     }
+
+
+//    public Result
+
+
+
 }
