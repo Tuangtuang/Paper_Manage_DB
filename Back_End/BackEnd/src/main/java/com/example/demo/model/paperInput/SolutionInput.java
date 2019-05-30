@@ -10,7 +10,7 @@ import lombok.Data;
  * @create: 2019-05-30 20:40
  **/
 @Data
-public class Solution {
+public class SolutionInput {
     @JsonProperty("problem_id")
     String problemId;
     @JsonProperty("userId")

@@ -3,12 +3,11 @@ package com.example.demo.service;
 import com.example.demo.dao.*;
 import com.example.demo.model.entity.*;
 import com.example.demo.model.overview.Result;
-import com.example.demo.model.paperInput.Solution;
+import com.example.demo.model.paperInput.ProblemResponse;
+import com.example.demo.model.paperInput.SolutionInput;
 import com.example.demo.model.paperManager.ProblemName;
 import com.example.demo.tool.ResultTool;
-import org.springframework.beans.factory.parsing.Problem;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -45,6 +44,9 @@ public class PaperInputService {
 
     @Resource
     private  UserMapper userMapper;
+
+    @Resource
+    private SolutionMapper solutionMapper;
 
     
     /** 
@@ -222,22 +224,31 @@ public class PaperInputService {
         question.setSecondKnowledgeId(Integer.parseInt(problemName.getSecondKnowledgeId()));
         question.setSubjectId(Integer.parseInt(problemName.getSubjectId()));
         questionMapper.insert(question);
-        return ResultTool.success();
+        ProblemResponse problemResponse=new ProblemResponse();
+        problemResponse.setProblemId(question.getId().toString());
+        return ResultTool.success(problemResponse);
 
     }
 
-//    public Result putSolution(Solution solution){
-//        int problemId=Integer.parseInt(solution.getProblemId());
-//        Question question=questionMapper.selectByPrimaryKey(problemId);
-//        if(question==null){
-//            return ResultTool.error("不存在该题目");
-//        }
-//        int userId = Integer.parseInt(solution.getUserId());
-//        User user=userMapper.selectByPrimaryKey(userId);
-//        if(user==null){
-//            return ResultTool.error("用户不存在");
-//        }
-//
-//    }
+    public Result putSolution(SolutionInput solutionInput){
+        int problemId=Integer.parseInt(solutionInput.getProblemId());
+        Question question=questionMapper.selectByPrimaryKey(problemId);
+        if(question==null){
+            return ResultTool.error("不存在该题目");
+        }
+        int userId = Integer.parseInt(solutionInput.getUserId());
+        User user=userMapper.selectByPrimaryKey(userId);
+        if(user==null){
+            return ResultTool.error("用户不存在");
+        }
+        SolutionWithBLOBs solution=new SolutionWithBLOBs();
+        solution.setProblemId(problemId);
+        solution.setContent(solutionInput.getMarkdownContent());
+        solution.setOther(solutionInput.getHtmlContent());
+        solutionMapper.insert(solution);
+        return ResultTool.success();
+
+
+    }
 
 }

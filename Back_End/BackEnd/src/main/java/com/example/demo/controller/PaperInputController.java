@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.overview.Result;
 import com.example.demo.model.paperInput.AnswerInput;
+import com.example.demo.model.paperInput.SolutionInput;
 import com.example.demo.model.paperManager.ProblemName;
 import com.example.demo.model.paperManager.QuestionId;
 import com.example.demo.service.PaperInputService;
@@ -171,5 +172,19 @@ public class PaperInputController {
         return paperInputService.putProblemContent(problemName);
     }
 
+    @PostMapping("/PaperInput/analysisInput")
+    public Result inputSolution(@RequestBody SolutionInput solutionInput,HttpServletRequest httpServletRequest){
+        String token=httpServletRequest.getHeader("Authorization");
+        String id;
+        try {
+            id= JwtUtil.parseJwt(token);
+        }catch (Exception e){
+            return ResultTool.error("登陆状态无效，无法解析token");
+        }
+        if (!solutionInput.getUserId().equals(id)){
+            return ResultTool.error("登陆状态无效，token和id不一致 ");
+        }
+        return paperInputService.putSolution(solutionInput);
+    }
 
 }
