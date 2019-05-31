@@ -124,8 +124,7 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.example.demo.model.entity.KeyWithBLOBs" >
-    insert into key (id, question_id, key_content, 
-      picture)
+    insert into `key` (id, question_id, key_content,picture)
     values (#{id,jdbcType=INTEGER}, #{questionId,jdbcType=INTEGER}, #{keyContent,jdbcType=LONGVARCHAR}, 
       #{picture,jdbcType=LONGVARCHAR})
   </insert>

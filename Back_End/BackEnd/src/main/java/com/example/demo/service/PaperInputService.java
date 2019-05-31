@@ -7,6 +7,7 @@ import com.example.demo.model.paperInput.ProblemResponse;
 import com.example.demo.model.paperInput.SolutionInput;
 import com.example.demo.model.paperManager.ProblemName;
 import com.example.demo.tool.ResultTool;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -19,6 +20,7 @@ import java.util.List;
  * @create: 2019-05-22 20:36
  **/
 @Service
+@Slf4j
 public class PaperInputService {
 
     @Resource
@@ -162,6 +164,7 @@ public class PaperInputService {
             return ResultTool.error("不存在该问题");
         }
 //        检查该题目是否存在答案
+        log.info(problemId+" "+content+" "+html);
         KeyWithBLOBs key=new KeyWithBLOBs();
         key.setQuestionId(Integer.parseInt(problemId));
         key.setKeyContent(content);
